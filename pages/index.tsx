@@ -1,6 +1,6 @@
-// import Head from 'next/head'
 import { useState } from 'react';
 import 'semantic-ui-css/semantic.min.css'
+import { Dimmer, Loader } from 'semantic-ui-react'
 
 import type { GetServerSideProps } from 'next';
 
@@ -23,13 +23,15 @@ const fetchCatImage = async ():Promise<SearchCatImage> => {
 }
 
 export default function Home({ initialImageUrl }: IndexPageProps) {
-
-  const [imageUrl, SetImageUrl] = useState(initialImageUrl);
-
+  const [imageUrl, setImageUrl] = useState(initialImageUrl);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
+    setIsLoading(true);
     const catImage = await fetchCatImage();
-    SetImageUrl(catImage.url);
+    setImageUrl(catImage.url);
+
+    setIsLoading(false);
   }
 
   return (
@@ -41,14 +43,23 @@ export default function Home({ initialImageUrl }: IndexPageProps) {
       height: "100vh"
     }}>
       <h1>CAT API APP</h1>
-      <img src={imageUrl}
-        style={{
-          display: "block",
-          width: "400px",
-          margin: "20px"
-        }}
-      />
-      <button onClick={handleClick}>Today's Cat</button>
+      {/* Loadingか画像か */}
+      {
+        isLoading ? (
+          <Dimmer active>
+            <Loader size='big'>Loading</Loader>
+          </Dimmer>
+        ) : (
+          <img src={imageUrl}
+            style={{
+              display: "block",
+              width: "400px",
+              margin: "20px"
+            }}
+          />
+          )
+        }
+      <button onClick={handleClick}>Today`s Cat</button>
     </div>
   )
 }
