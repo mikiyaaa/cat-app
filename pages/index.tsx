@@ -1,10 +1,20 @@
 // import Head from 'next/head'
 import Image from 'next/image'
+import { useState } from 'react';
 import styles from '../styles/Home.module.css'
+
+interface SearchCatImage {
+  id: string;
+  url: string;
+  width: number;
+  height: number;
+}
 
 export default function Home() {
 
-  const fetchCatImage = async () => {
+  const [imageUrl, SetImageUrl] = useState("");
+
+  const fetchCatImage = async ():Promise<SearchCatImage> => {
     const res = await fetch("https://api.thecatapi.com/v1/images/search");
     const result = await res.json();
     // console.log(result[0]);
@@ -13,7 +23,7 @@ export default function Home() {
 
   const handleClick = async () => {
     const catImage = await fetchCatImage();
-    console.log(catImage);
+    SetImageUrl(catImage.url);
   }
 
   return (
@@ -25,12 +35,11 @@ export default function Home() {
       height: "100vh"
     }}>
       <h1>CAT API APP</h1>
-      <img src='https://cdn2.thecatapi.com/images/ebv.jpg' 
+      <img src={imageUrl}
         style={{
           display: "block",
           width: "400px",
-          height: "60%",
-          margin: "100px"
+          margin: "20px"
         }}
       />
       <button onClick={handleClick}>Today's Cat</button>
