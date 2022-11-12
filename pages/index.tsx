@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { useState } from 'react';
 import styles from '../styles/Home.module.css'
 
+import type { GetServerSideProps } from 'next';
+
 interface SearchCatImage {
   id: string;
   url: string;
@@ -10,16 +12,21 @@ interface SearchCatImage {
   height: number;
 }
 
-export default function Home() {
+interface IndexPageProps {
+  initialImageUrl: string;
+}
 
-  const [imageUrl, SetImageUrl] = useState("");
+const fetchCatImage = async ():Promise<SearchCatImage> => {
+  const res = await fetch("https://api.thecatapi.com/v1/images/search");
+  const result = await res.json();
+  // console.log(result[0]);
+  return result[0];
+}
 
-  const fetchCatImage = async ():Promise<SearchCatImage> => {
-    const res = await fetch("https://api.thecatapi.com/v1/images/search");
-    const result = await res.json();
-    // console.log(result[0]);
-    return result[0];
-  }
+export default function Home({ initialImageUrl }: IndexPageProps) {
+
+  const [imageUrl, SetImageUrl] = useState(initialImageUrl);
+
 
   const handleClick = async () => {
     const catImage = await fetchCatImage();
@@ -46,3 +53,14 @@ export default function Home() {
     </div>
   )
 }
+
+// SSR（サーバーサイドレンダリング）
+export const getServerSideProps: GetServerSideProps<IndexPageProps> = async () => {
+  const catImage = await fetchCatImage();
+
+  return {
+    props: {
+      initialImageUrl: catImage.url,
+    }
+  }
+};
