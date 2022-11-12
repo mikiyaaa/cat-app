@@ -1,7 +1,6 @@
 // import Head from 'next/head'
-import Image from 'next/image'
 import { useState } from 'react';
-import styles from '../styles/Home.module.css'
+import 'semantic-ui-css/semantic.min.css'
 
 import type { GetServerSideProps } from 'next';
 
